@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loomline — KI-Automatisierung für Unternehmen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07080B;
+    --bg-alt: #0D0F14;
+    --card: #101319;
+    --card-raised: #151923;
+    --ink: #F2F3F6;
+    --body: #9BA3B5;
+    --body-dim: #6C7386;
+    --border: rgba(255,255,255,0.09);
+    --border-strong: rgba(255,255,255,0.18);
+    --glow: #6EA8FF;
+    --violet: #8B5CF6;
+    --pink: #FF7AC6;
+    --orange: #FFB648;
+    --font: 'Plus Jakarta Sans', sans-serif;
+    --font-serif: 'Instrument Serif', serif;
+    --pad: clamp(20px, 5vw, 64px);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+
+  :focus-visible { outline: 2px solid var(--glow); outline-offset: 3px; border-radius: 4px; }
+
+  h1, h2, h3 { margin: 0; letter-spacing: -0.02em; }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-left: var(--pad);
+    padding-right: var(--pad);
+    position: relative;
+  }
+
+  /* ---------- badge ---------- */
+  .badge {
+    display: inline-flex; align-items: center; gap: 9px;
+    border: 1px solid var(--border-strong);
+    background: rgba(255,255,255,0.03);
+    border-radius: 999px;
+    padding: 7px 16px 7px 12px;
+    font-size: 13px; font-weight: 500; color: var(--body);
+    margin-bottom: 22px;
+  }
+  .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--glow); box-shadow: 0 0 10px var(--glow); }
+
+  /* ---------- buttons ---------- */
+  .btn {
+    font-family: var(--font); font-size: 14.5px; font-weight: 600;
+    padding: 13px 24px; border-radius: 999px; border: none; cursor: pointer;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn--dark {
+    background: var(--card-raised); color: var(--ink);
+    border: 1px solid var(--border-strong);
+    box-shadow: inset 0 -1px 0 rgba(110,168,255,0.35), 0 12px 30px -14px rgba(110,168,255,0.25);
+  }
+  .btn--dark:hover { border-color: var(--glow); }
+  .btn--ghost { background: transparent; color: var(--ink); border: 1px solid var(--border-strong); }
+  .btn--ghost:hover { border-color: var(--body); }
+
+  /* ---------- nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 30;
+    background: rgba(7,8,11,0.75); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px var(--pad); max-width: 1180px; margin: 0 auto;
+  }
+  .wordmark { font-weight: 800; font-size: 19px; text-decoration: none; display: flex; align-items: center; gap: 9px; }
+  .wordmark-mark { width: 11px; height: 11px; background: linear-gradient(135deg, var(--violet), var(--glow)); border-radius: 3px; }
+  .nav-links { display: flex; align-items: center; gap: 30px; font-size: 14.5px; }
+  .nav-links a:not(.btn) { text-decoration: none; color: var(--body); transition: color 0.15s ease; }
+  .nav-links a:not(.btn):hover { color: var(--ink); }
+
+  .nav-toggle {
+    display: none; background: transparent; border: 1px solid var(--border-strong);
+    color: var(--ink); border-radius: 8px; padding: 8px 12px;
+    font-family: var(--font); font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  @media (max-width: 780px) {
+    .nav-links { display: none; }
+    .nav-links.open {
+      display: flex; flex-direction: column; align-items: flex-start;
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      padding: 18px var(--pad) 24px; gap: 16px;
+    }
+    .nav-toggle { display: block; }
+  }
+
+  /* ---------- hero ---------- */
+  .hero { position: relative; padding: clamp(70px, 11vw, 130px) 0 clamp(50px, 8vw, 80px); overflow: hidden; }
+  .hero-texture {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      radial-gradient(ellipse 60% 45% at 50% 0%, rgba(110,168,255,0.22), transparent 70%),
+      repeating-linear-gradient(115deg, rgba(255,255,255,0.028) 0px, rgba(255,255,255,0.028) 1px, transparent 1px, transparent 34px),
+      repeating-linear-gradient(65deg, rgba(255,255,255,0.022) 0px, rgba(255,255,255,0.022) 1px, transparent 1px, transparent 34px);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 0%, black 55%, transparent 100%);
+  }
+  .hero-inner { position: relative; z-index: 1; text-align: center; max-width: 780px; margin: 0 auto; }
+  .hero-mark {
+    width: 60px; height: 60px; margin: 0 auto 28px;
+    border-radius: 16px;
+    background: var(--card-raised);
+    border: 1px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 50px rgba(110,168,255,0.35);
+  }
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 60px);
+    line-height: 1.08;
+    font-weight: 800;
+    background: linear-gradient(180deg, #FFFFFF, #A6ADBB);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero h1 em {
+    font-style: italic;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    background: linear-gradient(180deg, #F2F3F6, #C7CCD6);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.lede {
+    font-size: 17px; line-height: 1.6; color: var(--body);
+    margin: 22px auto 32px; max-width: 48ch;
+  }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .hero-socials {
+    display: flex; gap: 18px; justify-content: center; margin-top: 34px;
+  }
+  .hero-socials a {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--body); font-size: 13px; text-decoration: none;
+  }
+  .hero-socials a:hover { color: var(--ink); border-color: var(--body); }
+
+  .hero-diagram {
+    position: relative; z-index: 1; margin: 56px auto 0; max-width: 640px;
+    border: 1px solid var(--border); border-radius: 20px;
+    background: rgba(255,255,255,0.02);
+    padding: 26px;
+    box-shadow: 0 40px 80px -40px rgba(0,0,0,0.6);
+  }
+  .diagram-node rect { fill: var(--card-raised); stroke: var(--border-strong); }
+  .diagram-node text { font-family: var(--font); font-size: 11px; font-weight: 600; fill: var(--ink); }
+  .diagram-node.agent rect { fill: var(--glow); stroke: var(--glow); }
+  .diagram-node.agent text { fill: #06070A; }
+  .diagram-path { fill: none; stroke: var(--glow); stroke-width: 1.6; stroke-dasharray: 240; stroke-dashoffset: 240; animation: draw 1.6s ease forwards; opacity: 0.8; }
+  .diagram-path:nth-of-type(4) { animation-delay: 0.9s; stroke: var(--pink); }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  .diagram-node { opacity: 0; animation: nodefade 0.4s ease forwards; }
+  .diagram-node.agent { animation-delay: 0.9s; }
+  .diagram-node.out { animation-delay: 1.7s; }
+  @keyframes nodefade { to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .diagram-path { animation: none; stroke-dashoffset: 0; }
+    .diagram-node { animation: none; opacity: 1; }
+  }
+
+  /* ---------- section shell ---------- */
+  .section { padding: clamp(56px, 9vw, 96px) 0; position: relative; border-top: 1px solid var(--border); }
+  .section-head { max-width: 620px; margin-bottom: clamp(36px, 6vw, 54px); position: relative; z-index: 1; }
+  .section-head.centered { margin-left: auto; margin-right: auto; text-align: center; }
+  .section-head h2 { font-size: clamp(28px, 4vw, 38px); font-weight: 800; }
+  .section-head p { color: var(--body); font-size: 15.5px; margin: 14px 0 0; line-height: 1.6; }
+
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+  /* ---------- benefits ---------- */
+  .benefit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; position: relative; z-index: 1; }
+  @media (max-width: 860px) { .benefit-grid { grid-template-columns: 1fr; } }
+  .benefit-card { border: 1px solid var(--border); background: var(--card); border-radius: 18px; padding: 28px 24px; }
+  .benefit-card .icon {
+    width: 42px; height: 42px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 18px;
+  }
+  .benefit-card:nth-child(1) .icon { background: rgba(139,92,246,0.14); color: var(--violet); }
+  .benefit-card:nth-child(2) .icon { background: rgba(255,122,198,0.14); color: var(--pink); }
+  .benefit-card:nth-child(3) .icon { background: rgba(255,182,72,0.14); color: var(--orange); }
+  .benefit-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .benefit-card p { font-size: 14.5px; color: var(--body); line-height: 1.6; margin: 0; }
+
+  /* ---------- services ---------- */
+  .service-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; position: relative; z-index: 1; }
+  @media (max-width: 720px) { .service-list { grid-template-columns: 1fr; } }
+  .service-item { border: 1px solid var(--border); background: var(--card); border-radius: 16px; padding: 26px 24px; }
+  .service-item h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .service-item p { font-size: 14.5px; color: var(--body); line-height: 1.6; margin: 0; }
+
+  /* ---------- process ---------- */
+  .process-list { display: flex; flex-direction: column; gap: 0; position: relative; z-index: 1; }
+  .process-item { display: grid; grid-template-columns: 64px 1fr; gap: 22px; padding: 24px 0; border-top: 1px solid var(--border); }
+  .process-item:first-child { border-top: none; }
+  .process-item .step-num { font-size: 24px; font-weight: 800; color: var(--glow); }
+  .process-item h3 { font-size: 17.5px; font-weight: 700; margin-bottom: 6px; }
+  .process-item p { font-size: 14.5px; color: var(--body); line-height: 1.6; margin: 0; max-width: 60ch; }
+
+  /* ---------- testimonials ---------- */
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; position: relative; z-index: 1; }
+  @media (max-width: 900px) { .testi-grid { grid-template-columns: 1fr; } }
+  .testi-card { border: 1px solid var(--border); background: var(--card); border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 18px; }
+  .testi-card p.quote { font-size: 15px; line-height: 1.6; margin: 0; }
+  .testi-who { font-size: 13px; color: var(--body-dim); border-top: 1px solid var(--border); padding-top: 14px; }
+  .testi-who strong { color: var(--ink); font-weight: 700; }
+
+  /* ---------- pricing ---------- */
+  .price-toggle {
+    position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid var(--border-strong); border-radius: 999px; padding: 5px; margin-bottom: 36px;
+  }
+  .price-toggle button {
+    background: transparent; border: none; color: var(--body);
+    padding: 8px 18px; border-radius: 999px; cursor: pointer;
+    font-family: var(--font); font-size: 13px; font-weight: 600;
+  }
+  .price-toggle button.active { background: var(--ink); color: var(--bg); }
+  .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; position: relative; z-index: 1; }
+  @media (max-width: 900px) { .price-grid { grid-template-columns: 1fr; } }
+  .price-card { border: 1px solid var(--border); background: var(--card); border-radius: 20px; padding: 30px 26px; display: flex; flex-direction: column; }
+  .price-card.featured { border: 1px solid var(--glow); box-shadow: 0 0 60px -20px rgba(110,168,255,0.35); background: var(--card-raised); }
+  .price-card .plan-name {
+    font-size: 13px; color: var(--body); text-transform: uppercase; letter-spacing: 0.04em;
+    display: flex; align-items: center; justify-content: space-between; font-weight: 700;
+  }
+  .plan-badge { background: var(--glow); color: var(--bg); font-size: 10px; padding: 4px 10px; border-radius: 10px; letter-spacing: 0.02em; }
+  .price-card .amount { font-size: 38px; font-weight: 800; margin: 16px 0 2px; color: var(--ink); }
+  .price-card .amount span { font-size: 13px; font-weight: 500; color: var(--body); }
+  .price-card ul { list-style: none; padding: 0; margin: 24px 0 28px; display: flex; flex-direction: column; gap: 11px; font-size: 14px; color: var(--body); flex: 1; }
+  .price-card ul li { display: flex; gap: 10px; }
+  .price-card ul li::before { content: '✓'; color: var(--glow); font-weight: 700; }
+  .price-card .btn { justify-content: center; }
+
+  /* ---------- faq ---------- */
+  .faq-list { max-width: 760px; position: relative; z-index: 1; }
+  details { border-top: 1px solid var(--border); padding: 20px 0; }
+  details:last-child { border-bottom: 1px solid var(--border); }
+  summary { cursor: pointer; font-size: 16px; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; color: var(--glow); font-size: 20px; margin-left: 20px; font-weight: 400; }
+  details[open] summary::after { content: '–'; }
+  details p { color: var(--body); font-size: 14.5px; line-height: 1.6; margin: 14px 0 0; max-width: 60ch; }
+
+  /* ---------- final cta ---------- */
+  .cta-final { text-align: center; padding: clamp(64px, 10vw, 110px) 0; position: relative; overflow: hidden; }
+  .cta-final .hero-texture { -webkit-mask-image: radial-gradient(ellipse 70% 100% at 50% 50%, black, transparent 75%); mask-image: radial-gradient(ellipse 70% 100% at 50% 50%, black, transparent 75%); }
+  .cta-final h2 { font-size: clamp(28px, 4.6vw, 44px); font-weight: 800; max-width: 20ch; margin: 0 auto 16px; position: relative; z-index: 1; }
+  .cta-final p { color: var(--body); font-size: 15.5px; margin: 0 0 32px; position: relative; z-index: 1; }
+  .cta-final .btn { position: relative; z-index: 1; padding: 15px 30px; }
+
+  /* ---------- footer ---------- */
+  footer { border-top: 1px solid var(--border); padding: 34px 0; }
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--body-dim); }
+  .footer-links { display: flex; gap: 22px; }
+  .footer-links a { text-decoration: none; color: var(--body-dim); }
+  .footer-links a:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#hero" class="wordmark"><span class="wordmark-mark"></span> Loomline</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#leistungen">Leistungen</a>
+      <a href="#ablauf">Ablauf</a>
+      <a href="#preise">Preise</a>
+      <a href="#faq">FAQ</a>
+      <a href="#kontakt" class="btn btn--dark">Erstgespräch buchen</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Menü öffnen" aria-expanded="false">MENÜ</button>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero" id="hero">
+    <div class="hero-texture"></div>
+    <div class="wrap">
+      <div class="hero-inner">
+        <div class="hero-mark" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="13" r="9" stroke="#F2F3F6" stroke-width="1.6" stroke-dasharray="2 5"/>
+            <circle cx="13" cy="13" r="4" fill="#F2F3F6"/>
+          </svg>
+        </div>
+        <span class="badge"><span class="dot"></span> Neue Generation KI-Automatisierung</span>
+        <h1>Weniger Verwaltung.<br><em>Mehr Wachstum.</em></h1>
+        <p class="lede">Loomline findet die Arbeitsschritte, die sich automatisieren lassen, entwirft die Lösung gemeinsam mit Ihnen und bringt sie in Ihre bestehenden Tools ein — meist innerhalb von zwei Wochen.</p>
+        <div class="hero-actions">
+          <a href="#kontakt" class="btn btn--dark">Kostenloses Erstgespräch →</a>
+          <a href="#ablauf" class="btn btn--ghost">So funktioniert's</a>
+        </div>
+        <div class="hero-socials">
+          <a href="#" aria-label="X">𝕏</a>
+          <a href="#" aria-label="Instagram">◎</a>
+          <a href="#" aria-label="Facebook">f</a>
+        </div>
+      </div>
+
+      <div class="hero-diagram">
+        <svg viewBox="0 0 340 260" width="100%" height="260" aria-hidden="true">
+          <path class="diagram-path" d="M40,50 C90,50 90,130 150,130" />
+          <path class="diagram-path" d="M40,130 C90,130 90,130 150,130" />
+          <path class="diagram-path" d="M40,210 C90,210 90,130 150,130" />
+          <path class="diagram-path" d="M190,130 C240,130 240,130 290,130" />
+
+          <g class="diagram-node in-left">
+            <rect x="4" y="34" width="72" height="32" rx="8"></rect>
+            <text x="40" y="54" text-anchor="middle">Posteingang</text>
+          </g>
+          <g class="diagram-node in-left">
+            <rect x="4" y="114" width="72" height="32" rx="8"></rect>
+            <text x="40" y="134" text-anchor="middle">Tabellen</text>
+          </g>
+          <g class="diagram-node in-left">
+            <rect x="4" y="194" width="72" height="32" rx="8"></rect>
+            <text x="40" y="214" text-anchor="middle">Kalender</text>
+          </g>
+
+          <g class="diagram-node agent">
+            <rect x="150" y="112" width="80" height="36" rx="10"></rect>
+            <text x="190" y="134" text-anchor="middle">KI-Agent</text>
+          </g>
+
+          <g class="diagram-node out">
+            <rect x="290" y="112" width="46" height="36" rx="10"></rect>
+            <text x="313" y="134" text-anchor="middle">Slack</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="benefits">
+    <div class="wrap">
+      <div class="section-head centered reveal">
+        <p class="badge"><span class="dot"></span> Warum Loomline</p>
+        <h2>Gebaut aus Ihrem echten Arbeitsalltag</h2>
+        <p>Jede Automatisierungs-Agentur verspricht dasselbe. So sieht es bei uns konkret aus.</p>
+      </div>
+      <div class="benefit-grid">
+        <div class="benefit-card reveal">
+          <div class="icon">◆</div>
+          <h3>Echtzeit-Einblicke</h3>
+          <p>Verlässliche, aktuelle Daten statt Bauchgefühl — für Entscheidungen, die Sie sofort treffen können.</p>
+        </div>
+        <div class="benefit-card reveal">
+          <div class="icon">▲</div>
+          <h3>Messbare Ergebnisse</h3>
+          <p>Jede Automatisierung liefert ein Dashboard, das zeigt, wie viel Zeit sie wirklich einspart.</p>
+        </div>
+        <div class="benefit-card reveal">
+          <div class="icon">●</div>
+          <h3>Nahtlose Integration</h3>
+          <p>Wir verbinden Tools, Teams und Abläufe, ohne dass Sie etwas migrieren müssen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="leistungen">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="badge"><span class="dot"></span> Leistungen</p>
+        <h2>Vier Wege, Ihnen Arbeit abzunehmen</h2>
+        <p>Die meisten Projekte starten mit einem Baustein und wachsen, sobald die erste Automatisierung sich bewährt hat.</p>
+      </div>
+      <div class="service-list">
+        <div class="service-item reveal">
+          <h3>Prozessautomatisierung</h3>
+          <p>Wiederkehrende Aufgaben in Verwaltung und Tagesgeschäft laufen künftig ohne manuellen Aufwand.</p>
+        </div>
+        <div class="service-item reveal">
+          <h3>Individuelle KI-Agenten</h3>
+          <p>Massgeschneiderte Assistenten, die lesen, sortieren, entwerfen und weiterleiten — trainiert auf Ihre Unterlagen und Ihren Ton.</p>
+        </div>
+        <div class="service-item reveal">
+          <h3>Echtzeit-Dashboards</h3>
+          <p>Ein Blick genügt, um zu sehen, was automatisiert ist, was es bringt und wo das nächste Potenzial liegt.</p>
+        </div>
+        <div class="service-item reveal">
+          <h3>Systemintegration</h3>
+          <p>Ihre bestehenden Tools bleiben — wir sorgen dafür, dass sie miteinander sprechen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="ablauf">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="badge"><span class="dot"></span> Ablauf</p>
+        <h2>Vier Schritte, immer in derselben Reihenfolge</h2>
+        <p>Es wird nichts gebaut, bevor Sie das Konzept gesehen und freigegeben haben.</p>
+      </div>
+      <div class="process-list">
+        <div class="process-item reveal">
+          <span class="step-num">01</span>
+          <div><h3>Analyse</h3><p>Wir schauen uns Ihre Arbeitsabläufe rund eine Woche lang an und finden jede manuelle Schnittstelle.</p></div>
+        </div>
+        <div class="process-item reveal">
+          <span class="step-num">02</span>
+          <div><h3>Konzept</h3><p>Wir entwerfen die Automatisierung zunächst auf Papier und stellen sie Ihnen vor — Freigabe vor Umsetzung.</p></div>
+        </div>
+        <div class="process-item reveal">
+          <span class="step-num">03</span>
+          <div><h3>Umsetzung</h3><p>Wir verbinden alles mit Ihren Systemen und testen es an echten Aufgaben, nicht an einer Demo.</p></div>
+        </div>
+        <div class="process-item reveal">
+          <span class="step-num">04</span>
+          <div><h3>Übergabe</h3><p>Sie erhalten Dashboard, verständliche Dokumentation und einen direkten Ansprechpartner.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="testimonials">
+    <div class="wrap">
+      <div class="section-head centered reveal">
+        <p class="badge"><span class="dot"></span> Ergebnisse</p>
+        <h2>Was sich nach der ersten Automatisierung ändert</h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card reveal">
+          <p class="quote">„Der Onboarding-Prozess war innerhalb einer Woche abgebildet und lief im nächsten Sprint bereits live."</p>
+          <p class="testi-who"><strong>Markus L.</strong> — Betriebsleiter, Nordwerk</p>
+        </div>
+        <div class="testi-card reveal">
+          <p class="quote">„Unser Support-Postfach hat morgens früher zwei Personen beschäftigt. Jetzt ist es sortiert, bevor beide überhaupt eingeloggt sind."</p>
+          <p class="testi-who"><strong>Sabine H.</strong> — Gründerin, Grünlicht Manufaktur</p>
+        </div>
+        <div class="testi-card reveal">
+          <p class="quote">„Das Dashboard war der Teil, den ich am wenigsten erwartet hatte — jetzt sehen wir wirklich, was automatisiert läuft."</p>
+          <p class="testi-who"><strong>Jonas R.</strong> — Teamleiter, Rheinpuls</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="preise">
+    <div class="wrap">
+      <div class="section-head centered reveal">
+        <p class="badge"><span class="dot"></span> Preise</p>
+        <h2>Preise, die mit Ihrer Automatisierung wachsen</h2>
+        <p>Jedes Paket enthält das Dashboard. Wechsel oder Kündigung zwischen den Projektphasen jederzeit möglich.</p>
+      </div>
+
+      <div style="text-align:center;">
+      <div class="price-toggle reveal" role="group" aria-label="Abrechnungszeitraum">
+        <button type="button" class="active" data-period="monthly">Monatlich</button>
+        <button type="button" data-period="yearly">Jährlich · 20 % sparen</button>
+      </div>
+      </div>
+
+      <div class="price-grid">
+        <div class="price-card reveal">
+          <p class="plan-name">Studio Starter</p>
+          <p class="amount"><span class="price-amount" data-monthly="450" data-yearly="360">450 €</span><span>/Monat</span></p>
+          <ul>
+            <li>Bis zu 2 Automatisierungen</li>
+            <li>Monatliches Check-in-Gespräch</li>
+            <li>E-Mail-Support</li>
+            <li>Standard-Dashboard</li>
+          </ul>
+          <a href="#kontakt" class="btn btn--ghost">Jetzt starten</a>
+        </div>
+        <div class="price-card featured reveal">
+          <p class="plan-name">Studio Pro <span class="plan-badge">Meistgebucht</span></p>
+          <p class="amount"><span class="price-amount" data-monthly="950" data-yearly="760">950 €</span><span>/Monat</span></p>
+          <ul>
+            <li>Bis zu 6 Automatisierungen</li>
+            <li>Ein individueller KI-Agent</li>
+            <li>Priorisierter Support</li>
+            <li>Live-Dashboard mit Alarmen</li>
+          </ul>
+          <a href="#kontakt" class="btn btn--dark">Jetzt starten</a>
+        </div>
+        <div class="price-card reveal">
+          <p class="plan-name">Studio Partner</p>
+          <p class="amount">Individuell</p>
+          <ul>
+            <li>Unbegrenzte Automatisierungen</li>
+            <li>Fest zugewiesener Automatisierungsingenieur</li>
+            <li>API- &amp; private Integrationen</li>
+            <li>Support mit SLA</li>
+          </ul>
+          <a href="#kontakt" class="btn btn--ghost">Kontakt aufnehmen</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="wrap">
+      <div class="section-head centered reveal">
+        <p class="badge"><span class="dot"></span> Fragen</p>
+        <h2>Bevor Sie ein Gespräch buchen</h2>
+      </div>
+      <div class="faq-list reveal" style="margin: 0 auto;">
+        <details>
+          <summary>Was zählt als eine „Automatisierung"?</summary>
+          <p>Ein vollständiger Arbeitsablauf — zum Beispiel das Sortieren und Beantworten eines gemeinsamen Postfachs oder die Übertragung neuer Bestellungen in CRM und Kalender.</p>
+        </details>
+        <details>
+          <summary>Brauche ich technisches Wissen?</summary>
+          <p>Nein. Wir übernehmen Umsetzung und Integration. Ihr Team zeigt uns lediglich, wie die Arbeit heute tatsächlich abläuft.</p>
+        </details>
+        <details>
+          <summary>Können Sie sich in unsere bestehenden Tools integrieren?</summary>
+          <p>In der Regel ja — gängige CRMs, Postfächer, Tabellen, Chat-Tools und Kalender lassen sich anbinden, sofern eine Schnittstelle existiert.</p>
+        </details>
+        <details>
+          <summary>Wie lange dauert die Umsetzung?</summary>
+          <p>Die erste Automatisierung ist meist innerhalb von zwei Wochen nach der Analyse live, abhängig davon, wie viele Systeme betroffen sind.</p>
+        </details>
+        <details>
+          <summary>Ist die Lösung DSGVO-konform?</summary>
+          <p>Ja. Wir arbeiten mit europäischen Hosting-Optionen und dokumentieren die Datenverarbeitung gemäss den Anforderungen der DSGVO. Details finden Sie in unserer Datenschutzerklärung.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-final" id="kontakt">
+    <div class="hero-texture"></div>
+    <div class="wrap">
+      <h2 class="reveal">Bereit, klüger zu automatisieren?</h2>
+      <p class="reveal">Ein 20-minütiges Erstgespräch — unverbindlich, ohne Foliensatz.</p>
+      <a href="#hero" class="btn btn--dark reveal">Kostenloses Erstgespräch buchen →</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>© 2026 Loomline — Demo-Vorlage, kein echtes Unternehmen</span>
+    <div class="footer-links">
+      <a href="#leistungen">Leistungen</a>
+      <a href="#preise">Preise</a>
+      <a href="datenschutz.html">Datenschutz</a>
+      <a href="impressum.html">Impressum</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }));
+
+  const toggleBtns = document.querySelectorAll('.price-toggle button');
+  const amounts = document.querySelectorAll('.price-amount');
+  toggleBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      toggleBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const period = btn.dataset.period;
+      amounts.forEach(el => { el.textContent = el.dataset[period] + ' €'; });
+    });
+  });
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotion && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  } else {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('is-visible'));
+  }
+</script>
+
+</body>
+</html>
